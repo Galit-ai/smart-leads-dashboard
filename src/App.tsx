@@ -46,9 +46,16 @@ export default function App() {
     <div className="min-h-screen bg-slate-100">
       <header className="bg-gradient-to-l from-violet-700 to-fuchsia-600 text-white">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-5">
-          <div>
-            <h1 className="text-2xl font-bold">דאשבורד ניהול לידים חכם</h1>
-            <p className="text-sm text-violet-100">Joole · בתי מלון ולקוחות פרטיים</p>
+          <div className="flex items-center gap-4">
+            <img
+              src={`${import.meta.env.BASE_URL}joole-logo.png`}
+              alt="JOOLE"
+              className="h-12 w-auto"
+            />
+            <div className="border-s border-white/30 ps-4">
+              <h1 className="text-2xl font-bold">דאשבורד ניהול לידים חכם</h1>
+              <p className="text-sm text-violet-100">בתי מלון ולקוחות פרטיים</p>
+            </div>
           </div>
           <button
             onClick={() => setEditing({ lead: emptyLead(), isNew: true })}
