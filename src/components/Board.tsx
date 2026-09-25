@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Lead, LeadStage } from '../types/lead'
-import { SOURCE_LABELS, STAGES, TYPE_LABELS } from '../types/lead'
+import { GENDER_LABELS, SOURCE_LABELS, STAGES } from '../types/lead'
 import { formatDate } from '../utils/dates'
 import { followUpFor, leadScore, temperature } from '../utils/smart'
 import { Chip, TempBadge } from './ui'
@@ -98,9 +98,11 @@ function LeadCard({
       {lead.company && <div className="text-sm text-slate-500">{lead.company}</div>}
 
       <div className="mt-2 flex flex-wrap gap-1">
-        <Chip>{TYPE_LABELS[lead.type]}</Chip>
         <Chip>{SOURCE_LABELS[lead.source]}</Chip>
-        {lead.units > 0 && <Chip>{lead.units} יח׳</Chip>}
+        {lead.type === 'hotel' && lead.units > 0 && <Chip>{lead.units} חדרים</Chip>}
+        {lead.type === 'private' && lead.age > 0 && <Chip>גיל {lead.age}</Chip>}
+        {lead.type === 'private' && lead.gender && <Chip>{GENDER_LABELS[lead.gender]}</Chip>}
+        {lead.type === 'private' && lead.city && <Chip>{lead.city}</Chip>}
       </div>
 
       {due && <div className="mt-2 text-xs font-medium text-violet-700">⏰ {due.reason}</div>}

@@ -1,7 +1,14 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
-import type { Interest, Lead, LeadSource, LeadStage, LeadType } from '../types/lead'
-import { INTEREST_LABELS, SOURCE_LABELS, STAGES, TYPE_LABELS } from '../types/lead'
+import type { Gender, Interest, Lead, LeadSource, LeadStage, LeadType } from '../types/lead'
+import {
+  GENDER_LABELS,
+  INTEREST_LABELS,
+  MIN_AGE,
+  SOURCE_LABELS,
+  STAGES,
+  TYPE_LABELS,
+} from '../types/lead'
 import { Modal } from './ui'
 
 interface Props {
@@ -19,12 +26,14 @@ export function LeadForm({ initial, isNew, onSave, onDelete, onClose }: Props) {
   const [lead, setLead] = useState(initial)
   const set = <K extends keyof Lead>(key: K, value: Lead[K]) =>
     setLead((prev) => ({ ...prev, [key]: value }))
+  const underage = lead.type === 'private' && lead.age > 0 && lead.age < MIN_AGE
 
   return (
     <Modal title={isNew ? 'ליד חדש' : lead.name || 'עריכת ליד'} onClose={onClose}>
       <form
         onSubmit={(e) => {
           e.preventDefault()
+          if (underage) return
           onSave({ ...lead, name: lead.name.trim() })
         }}
         className="grid grid-cols-2 gap-3 text-sm"
@@ -84,6 +93,70 @@ export function LeadForm({ initial, isNew, onSave, onDelete, onClose }: Props) {
                 placeholder="למשל: מנהל רכש"
               />
             </Field>
+            <Field label="מספר חדרים (הערכה)" wide>
+              <input
+                className={input}
+                type="number"
+                min={0}
+                value={lead.units}
+                onChange={(e) => set('units', Math.max(0, Number(e.target.value) || 0))}
+              />
+            </Field>
+          </>
+        )}
+
+        {lead.type === 'private' && (
+          <>
+            <Field label="גיל">
+              <input
+                className={`${input} ${underage ? 'border-rose-400' : ''}`}
+                type="number"
+                min={MIN_AGE}
+                value={lead.age || ''}
+                onChange={(e) => set('age', Math.max(0, Number(e.target.value) || 0))}
+              />
+            </Field>
+            <Field label="מין">
+              <select
+                className={input}
+                value={lead.gender}
+                onChange={(e) => set('gender', e.target.value as Gender)}
+              >
+                <option value="">לא ידוע</option>
+                {Object.entries(GENDER_LABELS).map(([id, label]) => (
+                  <option key={id} value={id}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            {underage && (
+              <p className="col-span-2 -mt-1 text-rose-600">
+                JOOLE מיועד לבני {MIN_AGE} ומעלה בלבד. אי אפשר לשמור ליד מתחת לגיל הזה.
+              </p>
+            )}
+            <Field label="עיר">
+              <input
+                className={input}
+                value={lead.city}
+                onChange={(e) => set('city', e.target.value)}
+              />
+            </Field>
+            <Field label="מדינה">
+              <input
+                className={input}
+                value={lead.country}
+                onChange={(e) => set('country', e.target.value)}
+              />
+            </Field>
+            <label className="col-span-2 flex items-center gap-2 text-slate-700">
+              <input
+                type="checkbox"
+                checked={lead.consent}
+                onChange={(e) => set('consent', e.target.checked)}
+              />
+              הסכים/ה לקבל ממני פניות (מילא/ה טופס או פנה/תה אליי)
+            </label>
           </>
         )}
 
@@ -132,16 +205,7 @@ export function LeadForm({ initial, isNew, onSave, onDelete, onClose }: Props) {
           </select>
         </Field>
 
-        <Field label="כמה יחידות (הערכה)">
-          <input
-            className={input}
-            type="number"
-            min={0}
-            value={lead.units}
-            onChange={(e) => set('units', Math.max(0, Number(e.target.value) || 0))}
-          />
-        </Field>
-        <Field label="קשר אחרון">
+        <Field label="קשר אחרון" wide>
           <input
             className={input}
             type="date"
@@ -170,7 +234,8 @@ export function LeadForm({ initial, isNew, onSave, onDelete, onClose }: Props) {
         <div className="col-span-2 mt-2 flex items-center gap-2">
           <button
             type="submit"
-            className="rounded-lg bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-700"
+            disabled={underage}
+            className="disabled:opacity-40 rounded-lg bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-700"
           >
             שמירה
           </button>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Lead } from '../types/lead'
-import { draftMessage } from '../utils/messages'
+import type { Lang } from '../utils/messages'
+import { LANG_LABELS, defaultLang, draftMessage } from '../utils/messages'
 import { Modal } from './ui'
 
 interface Props {
@@ -10,10 +11,16 @@ interface Props {
 }
 
 export function MessageDialog({ lead, onContacted, onClose }: Props) {
-  const [text, setText] = useState(() => draftMessage(lead))
+  const [lang, setLang] = useState<Lang>(() => defaultLang(lead))
+  const [text, setText] = useState(() => draftMessage(lead, lang))
   const [copied, setCopied] = useState(false)
 
-  const phone = lead.phone.replace(/\D/g, '').replace(/^0/, '972')
+  const phone = whatsappNumber(lead.phone, lead.country)
+
+  function changeLang(next: Lang) {
+    setLang(next)
+    setText(draftMessage(lead, next))
+  }
 
   async function copy() {
     try {
@@ -30,8 +37,22 @@ export function MessageDialog({ lead, onContacted, onClose }: Props) {
       <p className="mb-2 text-sm text-slate-500">
         טיוטה לפי סוג הלקוח והשלב. כדאי להוסיף משפט אישי לפני ששולחים.
       </p>
+      <div className="mb-2 flex gap-1">
+        {(Object.keys(LANG_LABELS) as Lang[]).map((l) => (
+          <button
+            key={l}
+            onClick={() => changeLang(l)}
+            className={`rounded-lg px-3 py-1 text-sm ${
+              l === lang ? 'bg-violet-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            {LANG_LABELS[l]}
+          </button>
+        ))}
+      </div>
       <textarea
         className="min-h-44 w-full rounded-lg border border-slate-200 p-3 text-slate-800 focus:border-violet-400 focus:outline-none"
+        dir={lang === 'he' ? 'rtl' : 'ltr'}
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
@@ -64,4 +85,18 @@ export function MessageDialog({ lead, onContacted, onClose }: Props) {
       </div>
     </Modal>
   )
+}
+
+/** מספר בפורמט בינלאומי לוואטסאפ. מספר מקומי (מתחיל ב-0) מקבל קידומת לפי המדינה. */
+function whatsappNumber(phone: string, country: string): string {
+  const trimmed = phone.trim()
+  const digits = trimmed.replace(/\D/g, '')
+  if (!digits) return ''
+  if (trimmed.startsWith('+')) return digits
+  if (digits.startsWith('00')) return digits.slice(2)
+  if (digits.startsWith('0')) {
+    if (/גרמניה|germany|deutschland/i.test(country)) return `49${digits.slice(1)}`
+    if (/ישראל|israel/i.test(country) || !country) return `972${digits.slice(1)}`
+  }
+  return digits
 }

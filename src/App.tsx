@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
+import { AudiencePanel } from './components/AudiencePanel'
 import { Board } from './components/Board'
+import { ImportDialog } from './components/ImportDialog'
 import { KpiRow } from './components/KpiRow'
 import { LeadForm } from './components/LeadForm'
 import { MessageDialog } from './components/MessageDialog'
@@ -12,20 +14,25 @@ import { daysBetween, today } from './utils/dates'
 import { todaysFollowUps } from './utils/smart'
 
 export default function App() {
-  const { leads, saveLead, updateLead, deleteLead, clearExamples, hasExamples } = useLeads()
+  const { leads, saveLead, updateLead, deleteLead, importLeads, clearExamples, hasExamples } =
+    useLeads()
+  const [tab, setTab] = useState<LeadType>('private')
   const [editing, setEditing] = useState<{ lead: Lead; isNew: boolean } | null>(null)
   const [messaging, setMessaging] = useState<Lead | null>(null)
+  const [importing, setImporting] = useState(false)
   const [search, setSearch] = useState('')
-  const [typeFilter, setTypeFilter] = useState<LeadType | 'all'>('all')
   const [sourceFilter, setSourceFilter] = useState<LeadSource | 'all'>('all')
 
-  const followUps = useMemo(() => todaysFollowUps(leads), [leads])
+  const tabLeads = useMemo(() => leads.filter((l) => l.type === tab), [leads, tab])
+  const followUps = useMemo(() => todaysFollowUps(tabLeads), [tabLeads])
 
-  const visible = leads.filter((l) => {
-    if (typeFilter !== 'all' && l.type !== typeFilter) return false
+  const visible = tabLeads.filter((l) => {
     if (sourceFilter !== 'all' && l.source !== sourceFilter) return false
-    const q = search.trim()
-    return !q || `${l.name} ${l.company} ${l.role} ${l.notes}`.includes(q)
+    const q = search.trim().toLowerCase()
+    return (
+      !q ||
+      `${l.name} ${l.company} ${l.role} ${l.city} ${l.email} ${l.notes}`.toLowerCase().includes(q)
+    )
   })
 
   function markContacted(lead: Lead) {
@@ -57,13 +64,35 @@ export default function App() {
               <p className="text-sm text-violet-100">בתי מלון ולקוחות פרטיים</p>
             </div>
           </div>
-          <button
-            onClick={() => setEditing({ lead: emptyLead(), isNew: true })}
-            className="rounded-xl bg-white px-4 py-2 font-bold text-violet-700 shadow hover:bg-violet-50"
-          >
-            + ליד חדש
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setImporting(true)}
+              className="rounded-xl border border-white/60 px-4 py-2 font-medium text-white hover:bg-white/10"
+            >
+              ⬆ ייבוא מקובץ
+            </button>
+            <button
+              onClick={() => setEditing({ lead: emptyLead(tab), isNew: true })}
+              className="rounded-xl bg-white px-4 py-2 font-bold text-violet-700 shadow hover:bg-violet-50"
+            >
+              + ליד חדש
+            </button>
+          </div>
         </div>
+        <nav className="mx-auto flex max-w-7xl gap-1 px-4">
+          {(['private', 'hotel'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`rounded-t-xl px-5 py-2 font-medium ${
+                t === tab ? 'bg-slate-100 text-violet-700' : 'text-violet-100 hover:bg-white/10'
+              }`}
+            >
+              {TYPE_LABELS[t]}{' '}
+              <span className="text-sm opacity-70">({leads.filter((l) => l.type === t).length})</span>
+            </button>
+          ))}
+        </nav>
       </header>
 
       <main className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5">
@@ -82,7 +111,9 @@ export default function App() {
           </div>
         )}
 
-        <KpiRow leads={leads} followUpCount={followUps.length} />
+        <KpiRow leads={tabLeads} followUpCount={followUps.length} />
+
+        {tab === 'private' && <AudiencePanel leads={tabLeads} />}
 
         <TodayPanel followUps={followUps} onMessage={setMessaging} onContacted={markContacted} />
 
@@ -95,18 +126,6 @@ export default function App() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <select
-              className={filterClass}
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value as LeadType | 'all')}
-            >
-              <option value="all">כל הסוגים</option>
-              {Object.entries(TYPE_LABELS).map(([id, label]) => (
-                <option key={id} value={id}>
-                  {label}
-                </option>
-              ))}
-            </select>
             <select
               className={filterClass}
               value={sourceFilter}
@@ -147,6 +166,14 @@ export default function App() {
             deleteLead(id)
             setEditing(null)
           }}
+        />
+      )}
+
+      {importing && (
+        <ImportDialog
+          type={tab}
+          onImport={(result) => importLeads(result.leads)}
+          onClose={() => setImporting(false)}
         />
       )}
 

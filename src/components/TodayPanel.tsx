@@ -1,5 +1,4 @@
 import type { Lead } from '../types/lead'
-import { TYPE_LABELS } from '../types/lead'
 import type { FollowUp } from '../utils/smart'
 import { leadScore, temperature } from '../utils/smart'
 import { TempBadge } from './ui'
@@ -30,8 +29,11 @@ export function TodayPanel({ followUps, onMessage, onContacted }: Props) {
                     <TempBadge temp={temperature(score)} score={score} />
                   </div>
                   <div className="text-sm text-slate-500">
-                    {TYPE_LABELS[lead.type]}
-                    {lead.company && ` · ${lead.company}`} · {reason}
+                    {lead.type === 'hotel'
+                      ? lead.company || 'בית מלון'
+                      : [lead.age > 0 && `גיל ${lead.age}`, lead.city].filter(Boolean).join(', ') ||
+                        'לקוח פרטי'}{' '}
+                    · {reason}
                   </div>
                 </div>
                 <button
