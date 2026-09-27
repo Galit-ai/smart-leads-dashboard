@@ -4,15 +4,22 @@ import { normalizeLead } from './emptyLead'
 import { exampleLeads } from './exampleLeads'
 
 const STORAGE_KEY = 'smart-leads-dashboard:leads'
+const EXAMPLES_CLEARED_KEY = 'smart-leads-dashboard:examples-cleared'
 
 function load(): Lead[] {
+  let stored: Lead[] = []
+  let examplesCleared = false
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return (JSON.parse(raw) as Partial<Lead>[]).map(normalizeLead)
+    if (raw) stored = (JSON.parse(raw) as Partial<Lead>[]).map(normalizeLead)
+    examplesCleared = localStorage.getItem(EXAMPLES_CLEARED_KEY) === '1'
   } catch {
     // אחסון חסום או נתונים פגומים – מתחילים מהדוגמאות
   }
-  return exampleLeads()
+  if (examplesCleared) return stored
+  // דוגמאות שנוספו בגרסה חדשה מופיעות גם אצל מי שכבר פתחה את הדאשבורד
+  const ids = new Set(stored.map((l) => l.id))
+  return [...stored, ...exampleLeads().filter((l) => !ids.has(l.id))]
 }
 
 /**
@@ -62,6 +69,11 @@ export function useLeads() {
   }
 
   function clearExamples() {
+    try {
+      localStorage.setItem(EXAMPLES_CLEARED_KEY, '1')
+    } catch {
+      // אחסון חסום – הדוגמאות יחזרו אחרי רענון
+    }
     setLeads((prev) => prev.filter((l) => !l.id.startsWith('ex-')))
   }
 
