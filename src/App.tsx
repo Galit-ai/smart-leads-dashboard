@@ -47,11 +47,11 @@ export default function App() {
   }
 
   const filterClass =
-    'rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-violet-400 focus:outline-none'
+    'rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-neutral-500 focus:outline-none'
 
   return (
     <div className="min-h-screen bg-slate-100">
-      <header className="bg-gradient-to-l from-violet-700 to-fuchsia-600 text-white">
+      <header className="border-b-4 border-red-600 bg-neutral-950 text-white">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-5">
           <div className="flex items-center gap-4">
             <img
@@ -61,19 +61,19 @@ export default function App() {
             />
             <div className="border-s border-white/30 ps-4">
               <h1 className="text-2xl font-bold">דאשבורד ניהול לידים חכם</h1>
-              <p className="text-sm text-violet-100">בתי מלון ולקוחות פרטיים</p>
+              <p className="text-sm text-neutral-400">בתי מלון ולקוחות פרטיים</p>
             </div>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => setImporting(true)}
-              className="rounded-xl border border-white/60 px-4 py-2 font-medium text-white hover:bg-white/10"
+              className="rounded-xl border border-neutral-500 px-4 py-2 font-medium text-white hover:bg-white/10"
             >
               ⬆ ייבוא מקובץ
             </button>
             <button
               onClick={() => setEditing({ lead: emptyLead(tab), isNew: true })}
-              className="rounded-xl bg-white px-4 py-2 font-bold text-violet-700 shadow hover:bg-violet-50"
+              className="rounded-xl bg-red-600 px-4 py-2 font-bold text-white shadow hover:bg-red-700"
             >
               + ליד חדש
             </button>
@@ -85,7 +85,7 @@ export default function App() {
               key={t}
               onClick={() => setTab(t)}
               className={`rounded-t-xl px-5 py-2 font-medium ${
-                t === tab ? 'bg-slate-100 text-violet-700' : 'text-violet-100 hover:bg-white/10'
+                t === tab ? 'bg-slate-100 text-red-700' : 'text-neutral-300 hover:bg-white/10'
               }`}
             >
               {TYPE_LABELS[t]}{' '}

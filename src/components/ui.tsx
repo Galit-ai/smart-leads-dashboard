@@ -3,9 +3,9 @@ import type { Temperature } from '../utils/smart'
 import { TEMPERATURE_LABELS } from '../utils/smart'
 
 const TEMP_CLASSES: Record<Temperature, string> = {
-  hot: 'bg-rose-100 text-rose-700',
+  hot: 'bg-red-100 text-red-700',
   warm: 'bg-amber-100 text-amber-700',
-  cold: 'bg-sky-100 text-sky-700',
+  cold: 'bg-slate-200 text-slate-700',
 }
 
 export function TempBadge({ temp, score }: { temp: Temperature; score: number }) {

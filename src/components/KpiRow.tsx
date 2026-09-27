@@ -15,8 +15,8 @@ export function KpiRow({ leads, followUpCount }: Props) {
 
   const cards = [
     { label: 'לידים פתוחים', value: open.length, tone: 'text-slate-800' },
-    { label: 'לידים חמים', value: hot, tone: 'text-rose-600' },
-    { label: 'לפנות היום', value: followUpCount, tone: 'text-violet-600' },
+    { label: 'לידים חמים', value: hot, tone: 'text-red-600' },
+    { label: 'לפנות היום', value: followUpCount, tone: 'text-neutral-950' },
     { label: 'נסגרו', value: won, tone: 'text-emerald-600' },
     {
       label: 'אחוז סגירה',

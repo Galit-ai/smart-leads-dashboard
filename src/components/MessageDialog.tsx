@@ -43,7 +43,7 @@ export function MessageDialog({ lead, onContacted, onClose }: Props) {
             key={l}
             onClick={() => changeLang(l)}
             className={`rounded-lg px-3 py-1 text-sm ${
-              l === lang ? 'bg-violet-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              l === lang ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             {LANG_LABELS[l]}
@@ -51,7 +51,7 @@ export function MessageDialog({ lead, onContacted, onClose }: Props) {
         ))}
       </div>
       <textarea
-        className="min-h-44 w-full rounded-lg border border-slate-200 p-3 text-slate-800 focus:border-violet-400 focus:outline-none"
+        className="min-h-44 w-full rounded-lg border border-slate-200 p-3 text-slate-800 focus:border-neutral-500 focus:outline-none"
         dir={lang === 'he' ? 'rtl' : 'ltr'}
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -59,7 +59,7 @@ export function MessageDialog({ lead, onContacted, onClose }: Props) {
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           onClick={copy}
-          className="rounded-lg bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-700"
+          className="rounded-lg bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
         >
           {copied ? '✓ הועתק' : '📋 העתקה'}
         </button>

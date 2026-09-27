@@ -69,7 +69,7 @@ export function AudiencePanel({ leads }: { leads: Lead[] }) {
 
       <div className="mt-3 flex flex-wrap gap-2 text-sm">
         {bySource.map(([source, count]) => (
-          <span key={source} className="rounded-full bg-violet-50 px-3 py-1 text-violet-700">
+          <span key={source} className="rounded-full bg-red-50 px-3 py-1 text-red-700">
             {SOURCE_LABELS[source as LeadSource]}: {count}
           </span>
         ))}

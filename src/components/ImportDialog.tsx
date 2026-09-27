@@ -12,7 +12,7 @@ interface Props {
 }
 
 const input =
-  'w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-800 focus:border-violet-400 focus:outline-none'
+  'w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-800 focus:border-neutral-500 focus:outline-none'
 
 export function ImportDialog({ type, onImport, onClose }: Props) {
   const [source, setSource] = useState<LeadSource>(type === 'hotel' ? 'linkedin' : 'facebook')
@@ -50,7 +50,7 @@ export function ImportDialog({ type, onImport, onClose }: Props) {
           </p>
           <button
             onClick={onClose}
-            className="rounded-lg bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-700"
+            className="rounded-lg bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
           >
             סגירה
           </button>
@@ -83,7 +83,7 @@ export function ImportDialog({ type, onImport, onClose }: Props) {
               type="file"
               accept=".csv,.tsv,.txt,text/csv"
               onChange={(e) => pickFile(e.target.files?.[0])}
-              className="text-slate-700 file:me-3 file:rounded-lg file:border-0 file:bg-violet-50 file:px-3 file:py-2 file:text-violet-700"
+              className="text-slate-700 file:me-3 file:rounded-lg file:border-0 file:bg-red-50 file:px-3 file:py-2 file:text-red-700"
             />
           </label>
 
@@ -127,7 +127,7 @@ export function ImportDialog({ type, onImport, onClose }: Props) {
             <button
               disabled={!preview || preview.leads.length === 0 || !consent}
               onClick={() => preview && setAdded(onImport(preview))}
-              className="rounded-lg bg-violet-600 px-4 py-2 font-medium text-white hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-lg bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
             >
               ייבוא
             </button>

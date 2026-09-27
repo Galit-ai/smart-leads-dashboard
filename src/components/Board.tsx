@@ -35,7 +35,7 @@ export function Board({ leads, onMove, onEdit, onMessage }: Props) {
               onMove(e.dataTransfer.getData('text/plain'), stage.id)
             }}
             className={`flex w-64 shrink-0 flex-col rounded-2xl p-3 transition-colors ${
-              dragOver === stage.id ? 'bg-violet-100' : 'bg-slate-200/60'
+              dragOver === stage.id ? 'bg-red-100' : 'bg-slate-200/60'
             }`}
           >
             <div className="mb-2 flex items-center justify-between px-1">
@@ -83,13 +83,13 @@ function LeadCard({
       draggable
       onDragStart={(e) => e.dataTransfer.setData('text/plain', lead.id)}
       className={`cursor-grab rounded-xl bg-white p-3 shadow-sm active:cursor-grabbing ${
-        due ? 'ring-2 ring-violet-300' : ''
+        due ? 'ring-2 ring-red-300' : ''
       }`}
     >
       <div className="flex items-start justify-between gap-2">
         <button
           onClick={() => onEdit(lead)}
-          className="text-right font-medium text-slate-800 hover:text-violet-700"
+          className="text-right font-medium text-slate-800 hover:text-red-700"
         >
           {lead.name}
         </button>
@@ -105,7 +105,7 @@ function LeadCard({
         {lead.type === 'private' && lead.city && <Chip>{lead.city}</Chip>}
       </div>
 
-      {due && <div className="mt-2 text-xs font-medium text-violet-700">⏰ {due.reason}</div>}
+      {due && <div className="mt-2 text-xs font-medium text-red-700">⏰ {due.reason}</div>}
       {!due && lead.nextFollowUp && isOpen && (
         <div className="mt-2 text-xs text-slate-500">לחזור ב-{formatDate(lead.nextFollowUp)}</div>
       )}
@@ -126,7 +126,7 @@ function LeadCard({
         {isOpen && (
           <button
             onClick={() => onMessage(lead)}
-            className="rounded-lg bg-violet-50 px-2 py-1 text-xs font-medium text-violet-700 hover:bg-violet-100"
+            className="rounded-lg bg-red-50 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-100"
           >
             ✍️ הודעה
           </button>
