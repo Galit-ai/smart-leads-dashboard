@@ -21,5 +21,6 @@
 - שינוי בשדות: לעדכן גם את הטבלה ב-Airtable וגם את `src/shared/airtableFields.ts`.
 
 ## פרסום
+- כתובת האתר: https://joole-smart-leads-dashboard.netlify.app
 - האתר מתפרסם ב-Netlify אוטומטית מכל push ל-`main` (`netlify.toml`).
 - לפני push: `npm run build` ו-`npm run lint` צריכים לעבור.
