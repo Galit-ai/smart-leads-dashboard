@@ -35,6 +35,8 @@ export interface Lead {
   gender: Gender
   city: string
   country: string
+  /** מי המליץ (כשהמקור הוא המלצה) */
+  referredBy: string
   /** הליד הסכים לקבל פניות (למשל מילא טופס) – חובה לפי GDPR באירופה */
   consent: boolean
   stage: LeadStage

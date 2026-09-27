@@ -1,7 +1,14 @@
 import { useState } from 'react'
 import type { Lead } from '../types/lead'
-import type { Lang } from '../utils/messages'
-import { LANG_LABELS, defaultLang, draftMessage } from '../utils/messages'
+import type { Lang, Opener } from '../utils/messages'
+import {
+  LANG_LABELS,
+  OPENER_LABELS,
+  defaultLang,
+  defaultOpener,
+  draftMessage,
+  openersFor,
+} from '../utils/messages'
 import { Modal } from './ui'
 
 interface Props {
@@ -12,15 +19,24 @@ interface Props {
 
 export function MessageDialog({ lead, onContacted, onClose }: Props) {
   const [lang, setLang] = useState<Lang>(() => defaultLang(lead))
-  const [text, setText] = useState(() => draftMessage(lead, lang))
+  const [opener, setOpener] = useState<Opener>(() => defaultOpener(lead))
+  const [text, setText] = useState(() => draftMessage(lead, lang, opener))
   const [copied, setCopied] = useState(false)
 
   const phone = whatsappNumber(lead.phone, lead.country)
 
   function changeLang(next: Lang) {
     setLang(next)
-    setText(draftMessage(lead, next))
+    setText(draftMessage(lead, next, opener))
   }
+
+  function changeOpener(next: Opener) {
+    setOpener(next)
+    setText(draftMessage(lead, lang, next))
+  }
+
+  const isFirstMessage = lead.stage === 'to_contact'
+  const noConsent = lead.type === 'private' && !lead.consent && opener === 'form'
 
   async function copy() {
     try {
@@ -50,6 +66,35 @@ export function MessageDialog({ lead, onContacted, onClose }: Props) {
           </button>
         ))}
       </div>
+      {isFirstMessage && (
+        <div className="mb-2 flex flex-wrap items-center gap-1 text-sm">
+          <span className="me-1 text-slate-500">איך הגענו אליו/ה:</span>
+          {openersFor(lead).map((o) => (
+            <button
+              key={o}
+              onClick={() => changeOpener(o)}
+              className={`rounded-lg px-3 py-1 ${
+                o === opener
+                  ? 'bg-neutral-900 text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {OPENER_LABELS[o]}
+            </button>
+          ))}
+        </div>
+      )}
+      {isFirstMessage && opener === 'personal' && (
+        <p className="mb-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          הנוסח הזה מיועד רק לאנשים שאת מכירה אישית (חברים, מכרים). לזרים באירופה פונים רק אחרי
+          שהשאירו פרטים והסכימו.
+        </p>
+      )}
+      {isFirstMessage && noConsent && (
+        <p className="mb-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          לא מסומן שהליד הסכים לקבל פניות. אם הוא לא מילא טופס, עדיף לבחור נוסח אחר.
+        </p>
+      )}
       <textarea
         className="min-h-44 w-full rounded-lg border border-slate-200 p-3 text-slate-800 focus:border-neutral-500 focus:outline-none"
         dir={lang === 'he' ? 'rtl' : 'ltr'}

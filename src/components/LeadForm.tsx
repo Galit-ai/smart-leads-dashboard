@@ -76,6 +76,17 @@ export function LeadForm({ initial, isNew, onSave, onDelete, onClose }: Props) {
           </select>
         </Field>
 
+        {lead.source === 'referral' && (
+          <Field label="מי המליץ" wide>
+            <input
+              className={input}
+              value={lead.referredBy}
+              onChange={(e) => set('referredBy', e.target.value)}
+              placeholder="למשל: Lena"
+            />
+          </Field>
+        )}
+
         {lead.type === 'hotel' && (
           <>
             <Field label="שם המלון">

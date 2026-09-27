@@ -15,6 +15,7 @@ export function emptyLead(type: LeadType = 'private'): Lead {
     gender: '',
     city: '',
     country: type === 'private' ? 'גרמניה' : '',
+    referredBy: '',
     consent: false,
     stage: 'to_contact',
     interest: 2,
