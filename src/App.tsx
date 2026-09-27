@@ -14,8 +14,18 @@ import { daysBetween, today } from './utils/dates'
 import { todaysFollowUps } from './utils/smart'
 
 export default function App() {
-  const { leads, saveLead, updateLead, deleteLead, importLeads, clearExamples, hasExamples } =
-    useLeads()
+  const {
+    leads,
+    mode,
+    error,
+    reload,
+    saveLead,
+    updateLead,
+    deleteLead,
+    importLeads,
+    clearExamples,
+    hasExamples,
+  } = useLeads()
   const [tab, setTab] = useState<LeadType>('private')
   const [editing, setEditing] = useState<{ lead: Lead; isNew: boolean } | null>(null)
   const [messaging, setMessaging] = useState<Lead | null>(null)
@@ -96,6 +106,24 @@ export default function App() {
       </header>
 
       <main className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5">
+        {mode === 'loading' && (
+          <p className="rounded-2xl bg-white px-4 py-3 text-sm text-slate-500 shadow-sm">
+            טוען לידים מבסיס הנתונים…
+          </p>
+        )}
+
+        {mode === 'airtable' && error && (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-800">
+            <span>{error}</span>
+            <button
+              onClick={() => void reload()}
+              className="rounded-lg bg-red-100 px-3 py-1 font-medium hover:bg-red-200"
+            >
+              טעינה מחדש מ-Airtable
+            </button>
+          </div>
+        )}
+
         {hasExamples && (
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
             <span>
@@ -149,7 +177,9 @@ export default function App() {
         </section>
 
         <p className="text-center text-xs text-slate-400">
-          הלידים נשמרים בדפדפן הזה בלבד. בדפדפן או במחשב אחר הם לא יופיעו.
+          {mode === 'airtable' && '● מחובר לבסיס הנתונים (Airtable) – הלידים זמינים מכל מחשב וטלפון.'}
+          {mode === 'local' &&
+            `○ אין חיבור לבסיס הנתונים (${error}) – הלידים נשמרים רק בדפדפן הזה.`}
         </p>
       </main>
 

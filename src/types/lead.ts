@@ -21,6 +21,8 @@ export const MIN_AGE = 18
 
 export interface Lead {
   id: string
+  /** מזהה הרשומה ב-Airtable (כשהדאשבורד מחובר לבסיס הנתונים) */
+  recordId?: string
   name: string
   type: LeadType
   source: LeadSource

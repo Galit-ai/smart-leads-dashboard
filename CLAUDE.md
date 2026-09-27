@@ -15,6 +15,11 @@
 - כל הממשק בעברית, מימין לשמאל.
 - חומרי JOOLE ב-Google Drive: התיקייה "JOOLE Knowledge Base- Drive- (Claude)".
 
+## בסיס נתונים
+- הלידים ב-Airtable, בטבלה "לידים JOOLE" (base `appv7CQmSWa9z0tLU`, table `tblslyrb0i4x4Vesr`).
+- הדפדפן לא מדבר עם Airtable ישירות – רק דרך `netlify/functions/leads.mts` (`/api/leads`), כי המפתח סודי.
+- שינוי בשדות: לעדכן גם את הטבלה ב-Airtable וגם את `src/shared/airtableFields.ts`.
+
 ## פרסום
 - האתר מתפרסם ב-Netlify אוטומטית מכל push ל-`main` (`netlify.toml`).
 - לפני push: `npm run build` ו-`npm run lint` צריכים לעבור.

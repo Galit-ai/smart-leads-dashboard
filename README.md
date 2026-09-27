@@ -15,7 +15,28 @@
 
 JOOLE מיועד לבני 18 ומעלה: אי אפשר לשמור או לייבא ליד מתחת לגיל הזה.
 
-הלידים נשמרים בדפדפן (localStorage), כלומר רק במחשב ובדפדפן שבהם הוזנו.
+## בסיס הנתונים (Airtable)
+
+הלידים נשמרים בטבלה **"לידים JOOLE"** ב-Airtable, ולא בקובץ או בדפדפן:
+
+```
+דפדפן (React)  →  /api/leads (Netlify Function)  →  Airtable REST API
+```
+
+- `src/data/useLeads.ts` – טוען את הלידים מ-`/api/leads` כשהדאשבורד עולה, ושולח כל שינוי (הוספה, עדכון, מחיקה, ייבוא).
+- `netlify/functions/leads.mts` – השרת. מקבל את הבקשות מהדפדפן ומעביר אותן ל-Airtable עם המפתח הסודי.
+- `src/shared/airtableFields.ts` – התרגום בין שדות הליד בקוד לעמודות בעברית ב-Airtable.
+
+המפתח של Airtable (`AIRTABLE_TOKEN`) שמור רק במשתני הסביבה של Netlify, ולכן אף פעם לא מגיע לדפדפן.
+אם אין חיבור לשרת (למשל בהרצה מקומית עם `npm run dev`), הדאשבורד עובר לשמירה בדפדפן ומציג את הסיבה בתחתית המסך.
+
+### משתני סביבה ב-Netlify
+
+| משתנה | חובה | ערך |
+|---|---|---|
+| `AIRTABLE_TOKEN` | כן | Personal access token מ-Airtable עם `data.records:read` ו-`data.records:write` על הבסיס |
+| `AIRTABLE_BASE_ID` | לא | ברירת מחדל: הבסיס הקיים |
+| `AIRTABLE_TABLE_ID` | לא | ברירת מחדל: הטבלה "לידים JOOLE" |
 
 ## הרצה מקומית
 
