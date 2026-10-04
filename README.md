@@ -5,6 +5,9 @@
 
 **האתר:** https://joole-smart-leads-dashboard.netlify.app
 
+- אפיון מלא: ראו [SPEC.md](SPEC.md)
+- כללי עבודה: ראו [Practice.md](Practice.md)
+
 ## מה יש בו
 
 - **שתי רשימות נפרדות**: לקוחות פרטיים ובתי מלון, כל אחת בלשונית משלה עם מדדים ותזכורות משלה.
